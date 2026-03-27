@@ -1,0 +1,225 @@
+const express = require('express');
+const router = express.Router();
+const { check, validationResult } = require('express-validator');
+const Workout = require('../models/Workout');
+const auth = require('../middleware/auth');
+
+// @route   GET api/workouts
+// @desc    Получение всех тренировок пользователя
+// @access  Private
+router.get('/', auth, async (req, res) => {
+    try {
+        const workouts = await Workout.find({ user: req.user.id }).sort({ date: -1 });
+        res.json(workouts);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Ошибка сервера');
+    }
+});
+
+// @route   GET api/workouts/:id
+// @desc    Получение тренировки по ID
+// @access  Private
+router.get('/:id', auth, async (req, res) => {
+    try {
+        const workout = await Workout.findById(req.params.id);
+
+        if (!workout) {
+            return res.status(404).json({ message: 'Тренировка не найдена' });
+        }
+
+        // Проверка принадлежности тренировки пользователю
+        if (workout.user.toString() !== req.user.id) {
+            return res.status(401).json({ message: 'Нет прав доступа' });
+        }
+
+        res.json(workout);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ message: 'Тренировка не найдена' });
+        }
+        res.status(500).send('Ошибка сервера');
+    }
+});
+
+// @route   GET api/workouts/date/:date
+// @desc    Получение тренировок на определенную дату
+// @access  Private
+router.get('/date/:date', auth, async (req, res) => {
+    try {
+        const date = new Date(req.params.date);
+        const nextDay = new Date(date);
+        nextDay.setDate(date.getDate() + 1);
+
+        const workouts = await Workout.find({
+            user: req.user.id,
+            date: {
+                $gte: date,
+                $lt: nextDay
+            }
+        }).sort({ time: 1 });
+
+        res.json(workouts);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Ошибка сервера');
+    }
+});
+
+// @route   GET api/workouts/range/:start/:end
+// @desc    Получение тренировок в диапазоне дат
+// @access  Private
+router.get('/range/:start/:end', auth, async (req, res) => {
+    try {
+        const startDate = new Date(req.params.start);
+        const endDate = new Date(req.params.end);
+        endDate.setDate(endDate.getDate() + 1); // Включаем конечную дату
+
+        const workouts = await Workout.find({
+            user: req.user.id,
+            date: {
+                $gte: startDate,
+                $lt: endDate
+            }
+        }).sort({ date: 1, time: 1 });
+
+        res.json(workouts);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Ошибка сервера');
+    }
+});
+
+// @route   POST api/workouts
+// @desc    Создание новой тренировки
+// @access  Private
+router.post(
+    '/',
+    [
+        auth,
+        [
+            check('type', 'Тип тренировки обязателен').not().isEmpty(),
+            check('date', 'Дата обязательна').not().isEmpty(),
+            check('time', 'Время обязательно').not().isEmpty(),
+            check('duration', 'Продолжительность обязательна').isNumeric()
+        ]
+    ],
+    async (req, res) => {
+        // Проверка валидации
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { type, date, time, duration, comment } = req.body;
+
+        try {
+            // Создание новой тренировки
+            const newWorkout = new Workout({
+                user: req.user.id,
+                type,
+                date,
+                time,
+                duration,
+                comment
+            });
+
+            // Сохранение тренировки
+            const workout = await newWorkout.save();
+            res.json(workout);
+        } catch (err) {
+            console.error(err.message);
+            res.status(500).send('Ошибка сервера');
+        }
+    }
+);
+
+// @route   PUT api/workouts/:id
+// @desc    Обновление тренировки
+// @access  Private
+router.put(
+    '/:id',
+    [
+        auth,
+        [
+            check('type', 'Тип тренировки обязателен').not().isEmpty(),
+            check('date', 'Дата обязательна').not().isEmpty(),
+            check('time', 'Время обязательно').not().isEmpty(),
+            check('duration', 'Продолжительность обязательна').isNumeric()
+        ]
+    ],
+    async (req, res) => {
+        // Проверка валидации
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
+        }
+
+        const { type, date, time, duration, comment } = req.body;
+
+        try {
+            // Поиск тренировки
+            let workout = await Workout.findById(req.params.id);
+
+            // Проверка существования тренировки
+            if (!workout) {
+                return res.status(404).json({ message: 'Тренировка не найдена' });
+            }
+
+            // Проверка принадлежности тренировки пользователю
+            if (workout.user.toString() !== req.user.id) {
+                return res.status(401).json({ message: 'Нет прав доступа' });
+            }
+
+            // Обновление полей
+            workout.type = type;
+            workout.date = date;
+            workout.time = time;
+            workout.duration = duration;
+            workout.comment = comment;
+
+            // Сохранение тренировки
+            await workout.save();
+            res.json(workout);
+        } catch (err) {
+            console.error(err.message);
+            if (err.kind === 'ObjectId') {
+                return res.status(404).json({ message: 'Тренировка не найдена' });
+            }
+            res.status(500).send('Ошибка сервера');
+        }
+    }
+);
+
+// @route   DELETE api/workouts/:id
+// @desc    Удаление тренировки
+// @access  Private
+router.delete('/:id', auth, async (req, res) => {
+    try {
+        // Поиск тренировки
+        const workout = await Workout.findById(req.params.id);
+
+        // Проверка существования тренировки
+        if (!workout) {
+            return res.status(404).json({ message: 'Тренировка не найдена' });
+        }
+
+        // Проверка принадлежности тренировки пользователю
+        if (workout.user.toString() !== req.user.id) {
+            return res.status(401).json({ message: 'Нет прав доступа' });
+        }
+
+        // Удаление тренировки
+        await workout.remove();
+        res.json({ message: 'Тренировка удалена' });
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ message: 'Тренировка не найдена' });
+        }
+        res.status(500).send('Ошибка сервера');
+    }
+});
+
+module.exports = router; 
