@@ -7,15 +7,6 @@ import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
 import { ThemeProvider } from './context/ThemeContext';
 
-// Импортируем axios для работы с API
-import axios from 'axios';
-
-// Настройка глобальных параметров axios
-const token = localStorage.getItem('token');
-if (token) {
-    axios.defaults.headers.common.Authorization = `Bearer ${token}`;
-}
-
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
     <React.StrictMode>
