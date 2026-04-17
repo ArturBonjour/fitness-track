@@ -20,7 +20,7 @@ const Login = () => {
     const { login, isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    // Redirect already-authenticated users to home (like all top apps do)
+    // Redirect already authenticated users to home (like all top apps do)
     useEffect(() => {
         if (isAuthenticated) navigate('/', { replace: true });
     }, [isAuthenticated, navigate]);

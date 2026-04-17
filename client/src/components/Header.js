@@ -20,7 +20,7 @@ const NavLink = ({ to, children, onClick }) => {
     );
 };
 
-/* User avatar: coloured circle with initial letter */
+/* User avatar: colored circle with initial letter */
 const UserAvatar = ({ name }) => {
     const initial = name ? name.charAt(0).toUpperCase() : '?';
     return (

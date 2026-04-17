@@ -43,7 +43,7 @@ const Register = () => {
     const { register, isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    // Redirect already-authenticated users to home
+    // Redirect already authenticated users to home
     useEffect(() => {
         if (isAuthenticated) navigate('/', { replace: true });
     }, [isAuthenticated, navigate]);
