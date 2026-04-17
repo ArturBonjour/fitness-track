@@ -2,6 +2,7 @@ import React, { useContext } from 'react';
 import Calendar from '../components/Calendar';
 import CalorieCalculator from '../components/CalorieCalculator';
 import WorkoutRecommendations from '../components/WorkoutRecommendations';
+import StatsWidget from '../components/StatsWidget';
 import { AuthContext } from '../context/AuthContext';
 import { Link } from 'react-router-dom';
 
@@ -46,9 +47,12 @@ const Home = () => {
                 </div>
                 <div className="space-y-6">
                     <div className="animate-fade-in" style={{ animationDelay: '60ms' }}>
-                        <CalorieCalculator />
+                        <StatsWidget />
                     </div>
                     <div className="animate-fade-in" style={{ animationDelay: '120ms' }}>
+                        <CalorieCalculator />
+                    </div>
+                    <div className="animate-fade-in" style={{ animationDelay: '180ms' }}>
                         <WorkoutRecommendations />
                     </div>
                 </div>
