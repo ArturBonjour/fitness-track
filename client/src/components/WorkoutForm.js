@@ -1,6 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
 
+const WORKOUT_TYPES = [
+    { value: 'силовая', emoji: '💪', label: 'Силовая' },
+    { value: 'кардио', emoji: '🏃', label: 'Кардио' },
+    { value: 'растяжка', emoji: '🧘', label: 'Растяжка' },
+    { value: 'йога', emoji: '🌿', label: 'Йога' },
+    { value: 'плавание', emoji: '🏊', label: 'Плавание' },
+    { value: 'другое', emoji: '🏋️', label: 'Другое' },
+];
+
+const Label = ({ htmlFor, children }) => (
+    <label htmlFor={htmlFor} className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">
+        {children}
+    </label>
+);
+
 const WorkoutForm = ({ onSubmit, initialDate }) => {
     const [formData, setFormData] = useState({
         type: 'силовая',
@@ -10,27 +25,14 @@ const WorkoutForm = ({ onSubmit, initialDate }) => {
         comment: '',
     });
 
-    // Установка начальной даты, если она передана
     useEffect(() => {
-        if (initialDate) {
-            setFormData(prev => ({
-                ...prev,
-                date: initialDate.format('YYYY-MM-DD')
-            }));
-        } else {
-            setFormData(prev => ({
-                ...prev,
-                date: dayjs().format('YYYY-MM-DD')
-            }));
-        }
+        const d = initialDate ? initialDate : dayjs();
+        setFormData(prev => ({ ...prev, date: d.format('YYYY-MM-DD') }));
     }, [initialDate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const handleSubmit = (e) => {
@@ -40,96 +42,101 @@ const WorkoutForm = ({ onSubmit, initialDate }) => {
 
     return (
         <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Тип тренировки */}
             <div>
-                <label htmlFor="type" className="block text-sm font-medium text-gray-700 mb-1">
-                    Тип тренировки *
-                </label>
-                <select
-                    id="type"
-                    name="type"
-                    value={formData.type}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
-                    required
-                >
-                    <option value="силовая">Силовая</option>
-                    <option value="кардио">Кардио</option>
-                    <option value="растяжка">Растяжка</option>
-                    <option value="йога">Йога</option>
-                    <option value="плавание">Плавание</option>
-                    <option value="другое">Другое</option>
-                </select>
+                <Label htmlFor="type">Тип тренировки *</Label>
+                <div className="grid grid-cols-3 gap-2">
+                    {WORKOUT_TYPES.map(({ value, emoji, label }) => (
+                        <button
+                            key={value}
+                            type="button"
+                            onClick={() => setFormData(prev => ({ ...prev, type: value }))}
+                            className={`flex flex-col items-center justify-center py-2 px-1 rounded-xl border-2 text-xs font-medium transition-all duration-150 ${
+                                formData.type === value
+                                    ? 'border-primary bg-primary/10 text-primary dark:text-purple-300'
+                                    : 'border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-400 hover:border-primary/50'
+                            }`}
+                        >
+                            <span className="text-xl mb-0.5">{emoji}</span>
+                            {label}
+                        </button>
+                    ))}
+                </div>
+                {/* hidden select for form submission value */}
+                <input type="hidden" name="type" value={formData.type} />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Дата и Время */}
+            <div className="grid grid-cols-2 gap-3">
                 <div>
-                    <label htmlFor="date" className="block text-sm font-medium text-gray-700 mb-1">
-                        Дата *
-                    </label>
+                    <Label htmlFor="date">Дата *</Label>
                     <input
                         type="date"
                         id="date"
                         name="date"
                         value={formData.date}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                        className="input-field"
                         required
                     />
                 </div>
-
                 <div>
-                    <label htmlFor="time" className="block text-sm font-medium text-gray-700 mb-1">
-                        Время *
-                    </label>
+                    <Label htmlFor="time">Время *</Label>
                     <input
                         type="time"
                         id="time"
                         name="time"
                         value={formData.time}
                         onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
+                        className="input-field"
                         required
                     />
                 </div>
             </div>
 
+            {/* Продолжительность */}
             <div>
-                <label htmlFor="duration" className="block text-sm font-medium text-gray-700 mb-1">
-                    Продолжительность (минут) (необязательно)
-                </label>
-                <input
-                    type="number"
-                    id="duration"
-                    name="duration"
-                    min="5"
-                    max="300"
-                    value={formData.duration}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
-                    placeholder="По умолчанию: 60 минут"
-                />
+                <Label htmlFor="duration">Продолжительность (мин)</Label>
+                <div className="flex items-center gap-3">
+                    <input
+                        type="range"
+                        id="duration"
+                        name="duration"
+                        min="5"
+                        max="180"
+                        step="5"
+                        value={formData.duration}
+                        onChange={handleChange}
+                        className="flex-1 accent-primary"
+                    />
+                    <span className="w-16 text-center text-sm font-semibold text-primary dark:text-purple-300 bg-primary/10 rounded-lg py-1">
+                        {formData.duration} мин
+                    </span>
+                </div>
             </div>
 
+            {/* Комментарий */}
             <div>
-                <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
-                    Комментарий (необязательно)
-                </label>
+                <Label htmlFor="comment">Комментарий</Label>
                 <textarea
                     id="comment"
                     name="comment"
-                    rows="3"
+                    rows="2"
                     value={formData.comment}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
-                    placeholder="Дополнительная информация о тренировке"
+                    className="input-field resize-none"
+                    placeholder="Заметки о тренировке..."
                 />
             </div>
 
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-1">
                 <button
                     type="submit"
-                    className="bg-primary hover:bg-purple-800 text-white py-2 px-4 rounded-md"
+                    className="btn-press bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-white py-2 px-6 rounded-xl font-medium shadow-md flex items-center gap-2"
                 >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
                     Сохранить
                 </button>
             </div>
@@ -137,4 +144,4 @@ const WorkoutForm = ({ onSubmit, initialDate }) => {
     );
 };
 
-export default WorkoutForm; 
+export default WorkoutForm;
