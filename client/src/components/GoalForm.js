@@ -86,7 +86,7 @@ const GoalForm = ({ onSubmit }) => {
                         </button>
                     ))}
                 </div>
-                <input type="hidden" name="type" value={formData.type} />
+                {/* hidden input for type - not needed since handleSubmit reads formData directly */}
             </div>
 
             {/* Значения */}

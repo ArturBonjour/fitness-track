@@ -62,8 +62,7 @@ const WorkoutForm = ({ onSubmit, initialDate }) => {
                         </button>
                     ))}
                 </div>
-                {/* hidden select for form submission value */}
-                <input type="hidden" name="type" value={formData.type} />
+                {/* hidden input for type - not needed since handleSubmit reads formData directly */}
             </div>
 
             {/* Дата и Время */}
