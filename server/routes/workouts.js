@@ -34,7 +34,7 @@ router.get('/', auth, async (req, res) => {
 router.get('/date/:date', auth, async (req, res) => {
     try {
         const date = new Date(req.params.date);
-        if (Number.isNaN(date.getTime())) {
+        if (isNaN(date.getTime())) {
             return res.status(400).json({ message: 'Некорректная дата' });
         }
         const nextDay = new Date(date);
@@ -62,7 +62,7 @@ router.get('/range/:start/:end', auth, async (req, res) => {
     try {
         const startDate = new Date(req.params.start);
         const endDate = new Date(req.params.end);
-        if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
             return res.status(400).json({ message: 'Некорректный диапазон дат' });
         }
         endDate.setDate(endDate.getDate() + 1); // Включаем конечную дату

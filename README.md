@@ -32,16 +32,16 @@ fitness-track/
 ### 1) Установить зависимости
 
 ```bash
-cd /home/runner/work/fitness-track/fitness-track/client
+cd client
 npm install
 
-cd /home/runner/work/fitness-track/fitness-track/server
+cd ../server
 npm install
 ```
 
 ### 2) Настроить переменные окружения (backend)
 
-Создайте файл `/home/runner/work/fitness-track/fitness-track/server/.env`:
+Создайте файл `server/.env`:
 
 ```env
 MONGO_URI=mongodb://127.0.0.1:27017/fitness-tracker
@@ -54,12 +54,12 @@ PORT=5001
 В двух терминалах:
 
 ```bash
-cd /home/runner/work/fitness-track/fitness-track/server
+cd server
 npm run dev
 ```
 
 ```bash
-cd /home/runner/work/fitness-track/fitness-track/client
+cd client
 npm start
 ```
 
@@ -96,7 +96,7 @@ Backend API: `http://localhost:5001`
 Минимальная локальная проверка:
 
 ```bash
-cd /home/runner/work/fitness-track/fitness-track/client
+cd client
 npm run build
 npm test -- --watchAll=false --passWithNoTests
 ```

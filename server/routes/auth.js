@@ -19,10 +19,10 @@ const loginLimiter = rateLimit({
     skipSuccessfulRequests: false
 });
 
-const logoutLimiter = rateLimit({
+const authenticatedAuthLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 30,
-    message: 'Слишком много попыток выхода. Попробуйте позже.',
+    max: 60,
+    message: 'Слишком много защищенных запросов к auth. Попробуйте позже.',
     standardHeaders: true,
     legacyHeaders: false
 });
@@ -171,7 +171,7 @@ router.post(
 // @route   GET api/auth/user
 // @desc    Получение данных текущего пользователя
 // @access  Private
-router.get('/user', auth, async (req, res) => {
+router.get('/user', auth, authenticatedAuthLimiter, async (req, res) => {
     try {
         const user = await User.findById(req.user.id).select('-password');
         if (!user) {
@@ -187,7 +187,7 @@ router.get('/user', auth, async (req, res) => {
 // @route   POST api/auth/logout
 // @desc    Выход пользователя
 // @access  Private
-router.post('/logout', auth, logoutLimiter, (req, res) => {
+router.post('/logout', auth, authenticatedAuthLimiter, (req, res) => {
     res.json({ message: 'Выход выполнен успешно' });
 });
 
