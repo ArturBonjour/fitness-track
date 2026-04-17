@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 
@@ -17,8 +17,13 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
-    const { login } = useContext(AuthContext);
+    const { login, isAuthenticated } = useContext(AuthContext);
     const navigate = useNavigate();
+
+    // Redirect already-authenticated users to home (like all top apps do)
+    useEffect(() => {
+        if (isAuthenticated) navigate('/', { replace: true });
+    }, [isAuthenticated, navigate]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;

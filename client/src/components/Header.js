@@ -20,6 +20,16 @@ const NavLink = ({ to, children, onClick }) => {
     );
 };
 
+/* User avatar: coloured circle with initial letter */
+const UserAvatar = ({ name }) => {
+    const initial = name ? name.charAt(0).toUpperCase() : '?';
+    return (
+        <span className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-sm font-bold text-white border border-white/30 select-none">
+            {initial}
+        </span>
+    );
+};
+
 const Header = () => {
     const { isAuthenticated, user, logout } = useContext(AuthContext);
     const { isDark, toggleTheme } = useContext(ThemeContext);
@@ -34,7 +44,7 @@ const Header = () => {
                     {/* Left — greeting */}
                     <div className="hidden md:flex items-center min-w-[180px]">
                         {isAuthenticated && (
-                            <span className="text-white/80 text-sm">
+                            <span className="text-white/80 text-sm flex items-center gap-2">
                                 👋 <span className="font-medium text-white">{user?.name}</span>
                             </span>
                         )}
@@ -69,12 +79,19 @@ const Header = () => {
                                 <>
                                     <NavLink to="/">Главная</NavLink>
                                     <NavLink to="/profile">Профиль</NavLink>
-                                    <button
-                                        onClick={logout}
-                                        className="px-3 py-2 rounded-lg text-sm font-medium text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200"
-                                    >
-                                        Выйти
-                                    </button>
+                                    <div className="flex items-center gap-2 ml-1">
+                                        <UserAvatar name={user?.name} />
+                                        <button
+                                            onClick={logout}
+                                            className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200"
+                                            title="Выйти из аккаунта"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                            </svg>
+                                            Выйти
+                                        </button>
+                                    </div>
                                 </>
                             ) : (
                                 <>
@@ -116,12 +133,19 @@ const Header = () => {
                 <div className="px-4 pb-4 pt-2 space-y-1 bg-primary-dark/40 backdrop-blur-sm">
                     {isAuthenticated ? (
                         <>
+                            <div className="flex items-center gap-2 px-3 py-2">
+                                <UserAvatar name={user?.name} />
+                                <span className="text-white/80 text-sm font-medium">{user?.name}</span>
+                            </div>
                             <NavLink to="/" onClick={closeMobile}>Главная</NavLink>
                             <NavLink to="/profile" onClick={closeMobile}>Профиль</NavLink>
                             <button
                                 onClick={() => { logout(); closeMobile(); }}
-                                className="block w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200"
+                                className="flex items-center gap-1.5 w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-white/90 hover:text-white hover:bg-white/10 transition-all duration-200"
                             >
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                                </svg>
                                 Выйти
                             </button>
                         </>
