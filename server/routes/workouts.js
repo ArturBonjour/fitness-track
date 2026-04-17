@@ -17,38 +17,15 @@ router.get('/', auth, async (req, res) => {
     }
 });
 
-// @route   GET api/workouts/:id
-// @desc    Получение тренировки по ID
-// @access  Private
-router.get('/:id', auth, async (req, res) => {
-    try {
-        const workout = await Workout.findById(req.params.id);
-
-        if (!workout) {
-            return res.status(404).json({ message: 'Тренировка не найдена' });
-        }
-
-        // Проверка принадлежности тренировки пользователю
-        if (workout.user.toString() !== req.user.id) {
-            return res.status(401).json({ message: 'Нет прав доступа' });
-        }
-
-        res.json(workout);
-    } catch (err) {
-        console.error(err.message);
-        if (err.kind === 'ObjectId') {
-            return res.status(404).json({ message: 'Тренировка не найдена' });
-        }
-        res.status(500).send('Ошибка сервера');
-    }
-});
-
 // @route   GET api/workouts/date/:date
 // @desc    Получение тренировок на определенную дату
 // @access  Private
 router.get('/date/:date', auth, async (req, res) => {
     try {
         const date = new Date(req.params.date);
+        if (Number.isNaN(date.getTime())) {
+            return res.status(400).json({ message: 'Некорректная дата' });
+        }
         const nextDay = new Date(date);
         nextDay.setDate(date.getDate() + 1);
 
@@ -74,6 +51,9 @@ router.get('/range/:start/:end', auth, async (req, res) => {
     try {
         const startDate = new Date(req.params.start);
         const endDate = new Date(req.params.end);
+        if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+            return res.status(400).json({ message: 'Некорректный диапазон дат' });
+        }
         endDate.setDate(endDate.getDate() + 1); // Включаем конечную дату
 
         const workouts = await Workout.find({
@@ -87,6 +67,32 @@ router.get('/range/:start/:end', auth, async (req, res) => {
         res.json(workouts);
     } catch (err) {
         console.error(err.message);
+        res.status(500).send('Ошибка сервера');
+    }
+});
+
+// @route   GET api/workouts/:id
+// @desc    Получение тренировки по ID
+// @access  Private
+router.get('/:id', auth, async (req, res) => {
+    try {
+        const workout = await Workout.findById(req.params.id);
+
+        if (!workout) {
+            return res.status(404).json({ message: 'Тренировка не найдена' });
+        }
+
+        // Проверка принадлежности тренировки пользователю
+        if (workout.user.toString() !== req.user.id) {
+            return res.status(401).json({ message: 'Нет прав доступа' });
+        }
+
+        res.json(workout);
+    } catch (err) {
+        console.error(err.message);
+        if (err.kind === 'ObjectId') {
+            return res.status(404).json({ message: 'Тренировка не найдена' });
+        }
         res.status(500).send('Ошибка сервера');
     }
 });
@@ -211,7 +217,7 @@ router.delete('/:id', auth, async (req, res) => {
         }
 
         // Удаление тренировки
-        await workout.remove();
+        await workout.deleteOne();
         res.json({ message: 'Тренировка удалена' });
     } catch (err) {
         console.error(err.message);

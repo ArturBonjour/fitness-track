@@ -1,17 +1,15 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
+import { ThemeContext } from '../context/ThemeContext';
 
 const Header = () => {
     const { isAuthenticated, user, logout } = useContext(AuthContext);
+    const { isDark, toggleTheme } = useContext(ThemeContext);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-    const toggleMobileMenu = () => {
-        setMobileMenuOpen(!mobileMenuOpen);
-    };
-
     return (
-        <header className="bg-primary shadow-md">
+        <header className="bg-primary shadow-lg transition-shadow duration-300">
             <div className="container mx-auto px-4">
                 <div className="flex items-center justify-between h-16">
                     {/* Левая часть с приветствием */}
@@ -32,32 +30,49 @@ const Header = () => {
                     </div>
 
                     {/* Правая часть с навигацией */}
-                    <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                        <button
+                            type="button"
+                            onClick={toggleTheme}
+                            className="text-white/90 hover:text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                            aria-label="Сменить тему"
+                            title="Сменить тему"
+                        >
+                            {isDark ? '☀️' : '🌙'}
+                        </button>
                         {isAuthenticated ? (
                             <>
-                                <Link to="/" className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium">
+                                <Link to="/" className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                                     Главная
                                 </Link>
-                                <Link to="/profile" className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium">
+                                <Link to="/profile" className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                                     Профиль
                                 </Link>
                                 <button
                                     onClick={logout}
-                                    className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium"
+                                    className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
                                 >
                                     Выйти
                                 </button>
                             </>
                         ) : (
                             <>
-                                <Link to="/login" className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium">
+                                <Link to="/login" className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                                     Вход
                                 </Link>
-                                <Link to="/register" className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium">
+                                <Link to="/register" className="text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200">
                                     Регистрация
                                 </Link>
                             </>
                         )}
+                        <button
+                            type="button"
+                            className="md:hidden text-white hover:bg-purple-900 px-3 py-2 rounded-md text-sm font-medium transition-colors duration-200"
+                            onClick={() => setMobileMenuOpen((prev) => !prev)}
+                            aria-label="Открыть мобильное меню"
+                        >
+                            ☰
+                        </button>
                     </div>
                 </div>
             </div>

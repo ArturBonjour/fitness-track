@@ -1,107 +1,107 @@
 # Bogdanov FitTrack
 
-Фитнес-трекер "Bogdanov FitTrack" - веб-приложение для отслеживания тренировок, целей и прогресса.
+Веб-приложение для учета тренировок, целей и динамики физической активности.
 
-## Особенности
+## Стек
 
-- 🏋️‍♂️ Отслеживание тренировок и физической активности
-- 🎯 Постановка и отслеживание целей
-- 📊 Визуализация прогресса с помощью графиков
-- 📅 Календарь тренировок
-- 👤 Профиль пользователя
+- **Frontend:** React, Tailwind CSS, Chart.js, Axios
+- **Backend:** Node.js, Express, Mongoose, JWT
+- **DB:** MongoDB
 
-## Технологии
+## Ключевые возможности
 
-- **Фронтенд**: React, Tailwind CSS, Chart.js
-- **Хранение данных**: LocalStorage (демо-режим)
-
-## Демо-режим
-
-Приложение настроено для работы в демо-режиме с использованием LocalStorage вместо MongoDB, что позволяет запустить и протестировать все основные функции без необходимости настройки сервера и базы данных.
-
-## Установка и запуск
-
-### Требования
-
-- Node.js (v14+)
-- npm (v6+)
-
-### Шаги для запуска
-
-1. **Клонировать репозиторий**
-
-```bash
-git clone https://github.com/ваш-репозиторий/fitness-tracker.git
-cd fitness-tracker
-```
-
-2. **Установить зависимости клиентской части**
-
-```bash
-cd client
-npm install
-```
-
-3. **Запустить приложение**
-
-```bash
-npm start
-```
-
-Приложение будет доступно по адресу [http://localhost:3000](http://localhost:3000).
-
-## Использование
-
-1. **Вход в систему**
-
-   В демо-режиме авторизация происходит автоматически при загрузке приложения.
-
-2. **Работа с календарем**
-
-   - Добавление тренировки: нажмите кнопку "Добавить тренировку" или выберите дату в календаре
-   - Добавление цели: нажмите кнопку "Добавить цель"
-
-3. **Профиль пользователя**
-
-   - Редактирование личных данных: нажмите "Редактировать" в разделе личных данных
-   - Просмотр статистики: графики и таблицы доступны в соответствующих разделах
-
-## Демо-данные
-
-При первом запуске создается демо-профиль пользователя. Вы можете добавлять тренировки и цели, редактировать профиль - все изменения будут сохраняться в LocalStorage вашего браузера.
-
-## Возможности для расширения
-
-- Подключение реального бэкенда с MongoDB
-- Добавление аутентификации пользователей
-- Расширение аналитики и отчетов
-- Добавление социальных функций (соревнования, достижения)
-- Интеграция с устройствами отслеживания активности
+- Регистрация и авторизация пользователя (JWT)
+- Календарь тренировок с добавлением записей
+- Управление фитнес-целями и отслеживание прогресса
+- Профиль пользователя и графики динамики веса/активности
+- Блок рекомендаций по тренировкам
+- Светлая/темная тема интерфейса
 
 ## Структура проекта
 
-```
-fitness-tracker/
-├── client/                 # Клиентская часть (React)
-│   ├── public/             # Статические файлы
-│   └── src/                # Исходный код React
-│       ├── components/     # Компоненты React
-│       ├── context/        # Контекст React
-│       ├── pages/          # Страницы приложения
-│       └── assets/         # Изображения и другие ресурсы
-├── server/                 # Серверная часть (Node.js/Express)
-│   ├── controllers/        # Контроллеры
-│   ├── models/             # Модели Mongoose
-│   ├── routes/             # Маршруты API
-│   ├── middleware/         # Промежуточное ПО
-│   └── server.js           # Точка входа сервера
-└── README.md               # Документация проекта
+```text
+fitness-track/
+├── client/                # React-приложение
+├── server/                # Express API
+├── Метод_указ_...md       # Методические указания для ВКР
+└── v1_Bogdanov09-253.*    # Черновики дипломной работы
 ```
 
-## Авторы
+## Установка и запуск
 
-- Ваше имя - [ваш email](mailto:your.email@example.com)
+### 1) Установить зависимости
 
-## Лицензия
+```bash
+cd /home/runner/work/fitness-track/fitness-track/client
+npm install
 
-Этот проект лицензирован под MIT License. 
+cd /home/runner/work/fitness-track/fitness-track/server
+npm install
+```
+
+### 2) Настроить переменные окружения (backend)
+
+Создайте файл `/home/runner/work/fitness-track/fitness-track/server/.env`:
+
+```env
+MONGO_URI=mongodb://127.0.0.1:27017/fitness-tracker
+JWT_SECRET=replace_with_strong_secret
+PORT=5001
+```
+
+### 3) Запуск приложения
+
+В двух терминалах:
+
+```bash
+cd /home/runner/work/fitness-track/fitness-track/server
+npm run dev
+```
+
+```bash
+cd /home/runner/work/fitness-track/fitness-track/client
+npm start
+```
+
+Frontend: `http://localhost:3000`  
+Backend API: `http://localhost:5001`
+
+## Скрипты
+
+### Frontend (`client/package.json`)
+
+- `npm start` — dev-сервер
+- `npm run build` — production-сборка
+- `npm test -- --watchAll=false --passWithNoTests` — запуск тестов в CI-режиме
+
+### Backend (`server/package.json`)
+
+- `npm start` — запуск сервера
+- `npm run dev` — запуск с nodemon
+- `npm run init-recommendations` — инициализация коллекции рекомендаций
+
+## API (основные маршруты)
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `GET /api/auth/user`
+- `POST /api/auth/logout`
+- `GET/POST/PUT/DELETE /api/workouts...`
+- `GET/POST/PUT/DELETE /api/goals...`
+- `GET /api/users/weight-history`
+- `GET /api/recommendations/:goal/:level`
+
+## Проверка качества
+
+Минимальная локальная проверка:
+
+```bash
+cd /home/runner/work/fitness-track/fitness-track/client
+npm run build
+npm test -- --watchAll=false --passWithNoTests
+```
+
+## Автор
+
+Богданов Артур Владимирович  
+КФУ, направление «Прикладная информатика»

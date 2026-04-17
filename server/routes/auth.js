@@ -176,4 +176,11 @@ router.get('/user', auth, async (req, res) => {
     }
 });
 
-module.exports = router; 
+// @route   POST api/auth/logout
+// @desc    Выход пользователя
+// @access  Private
+router.post('/logout', auth, (req, res) => {
+    res.json({ message: 'Выход выполнен успешно' });
+});
+
+module.exports = router;

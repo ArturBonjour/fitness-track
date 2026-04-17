@@ -14,6 +14,64 @@ body {
     background-color: #f9fafb;
 }
 
+body,
+#root {
+    min-height: 100vh;
+}
+
+.bg-app {
+    background: radial-gradient(circle at 10% 10%, rgba(74, 20, 140, 0.08), transparent 30%), #f9fafb;
+}
+
+.text-app {
+    color: #111827;
+}
+
+.dark .bg-app {
+    background: radial-gradient(circle at 10% 10%, rgba(168, 85, 247, 0.2), transparent 30%), #0f172a;
+}
+
+.dark .text-app {
+    color: #e5e7eb;
+}
+
+.dark .bg-white {
+    background-color: #1f2937 !important;
+}
+
+.dark .bg-gray-50 {
+    background-color: #111827 !important;
+}
+
+.dark .text-gray-800,
+.dark .text-gray-700,
+.dark .text-gray-600,
+.dark .text-gray-500,
+.dark .text-gray-900 {
+    color: #e5e7eb !important;
+}
+
+.dark .border-gray-200,
+.dark .border-gray-300 {
+    border-color: #374151 !important;
+}
+
+.animate-fade-in {
+    animation: fadeIn 300ms ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
         monospace;

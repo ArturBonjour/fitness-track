@@ -18,7 +18,16 @@ import useAxiosInterceptor from './hooks/useAxiosInterceptor';
 
 // Защищенный маршрут
 const PrivateRoute = ({ children }) => {
-    const { isAuthenticated } = useContext(AuthContext);
+    const { isAuthenticated, loading } = useContext(AuthContext);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center py-16">
+                <div className="h-10 w-10 animate-spin rounded-full border-b-2 border-primary"></div>
+            </div>
+        );
+    }
+
     return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
@@ -27,9 +36,9 @@ function App() {
     useAxiosInterceptor();
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-50">
+        <div className="flex flex-col min-h-screen bg-app text-app transition-colors duration-300">
             <Header />
-            <main className="flex-grow container mx-auto px-4 py-8">
+            <main className="flex-grow container mx-auto px-4 py-8 animate-fade-in">
                 <Routes>
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />

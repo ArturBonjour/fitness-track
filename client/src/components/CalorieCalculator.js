@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 const CalorieCalculator = () => {
@@ -18,7 +17,7 @@ const CalorieCalculator = () => {
         }));
     };
 
-    const calculateCalories = () => {
+    const calculateCalories = useCallback(() => {
         if (!user) return;
 
         // Формула Харриса-Бенедикта
@@ -53,13 +52,13 @@ const CalorieCalculator = () => {
             tdee: Math.round(tdee),
             targetCalories
         });
-    };
+    }, [formData.activityLevel, formData.goal, user]);
 
     useEffect(() => {
         if (user) {
             calculateCalories();
         }
-    }, [user, formData.activityLevel, formData.goal]);
+    }, [user, calculateCalories]);
 
     if (!user) {
         return (
