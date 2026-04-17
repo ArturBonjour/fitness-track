@@ -125,7 +125,7 @@ const Register = () => {
                                     value={formData.password} onChange={handleChange}
                                     className="input-field pr-11" placeholder="Минимум 6 символов" minLength="6" required autoComplete="new-password" />
                                 <button type="button" onClick={() => setShowPassword((v) => !v)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 focus:outline-none" tabIndex={-1}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 focus:outline-none" tabIndex={0}
                                     aria-label={showPassword ? 'Скрыть пароль' : 'Показать пароль'}>
                                     <EyeIcon open={showPassword} />
                                 </button>
@@ -148,7 +148,7 @@ const Register = () => {
                                     value={formData.confirmPassword} onChange={handleChange}
                                     className="input-field pr-11" placeholder="Повторите пароль" minLength="6" required autoComplete="new-password" />
                                 <button type="button" onClick={() => setShowConfirm((v) => !v)}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 focus:outline-none" tabIndex={-1}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 focus:outline-none" tabIndex={0}
                                     aria-label={showConfirm ? 'Скрыть пароль' : 'Показать пароль'}>
                                     <EyeIcon open={showConfirm} />
                                 </button>

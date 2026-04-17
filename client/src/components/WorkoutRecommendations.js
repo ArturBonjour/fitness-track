@@ -23,6 +23,7 @@ const WorkoutRecommendations = () => {
     const [recommendation, setRecommendation] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
         let cancelled = false;
@@ -42,7 +43,7 @@ const WorkoutRecommendations = () => {
 
         fetchRecommendation();
         return () => { cancelled = true; };
-    }, [selectedGoal, selectedLevel]);
+    }, [selectedGoal, selectedLevel, retryCount]);
 
     return (
         <div className="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-card p-6">
@@ -97,7 +98,7 @@ const WorkoutRecommendations = () => {
                     <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>
                     <button
                         type="button"
-                        onClick={() => setSelectedGoal((g) => g)}
+                        onClick={() => setRetryCount((c) => c + 1)}
                         className="mt-3 text-primary dark:text-purple-400 text-sm hover:underline"
                     >
                         Попробовать снова
