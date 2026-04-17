@@ -11,10 +11,7 @@ const CalorieCalculator = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({
-            ...prev,
-            [name]: value
-        }));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     useEffect(() => {
@@ -30,18 +27,18 @@ const CalorieCalculator = () => {
 
         // Коэффициенты активности
         const activityMultipliers = {
-            sedentary: 1.2,      // Сидячий образ жизни
-            light: 1.375,        // Легкая активность
-            moderate: 1.55,      // Умеренная активность
-            active: 1.725,       // Высокая активность
-            veryActive: 1.9      // Очень высокая активность
+            sedentary: 1.2,
+            light: 1.375,
+            moderate: 1.55,
+            active: 1.725,
+            veryActive: 1.9
         };
 
         // Целевые коэффициенты
         const goalMultipliers = {
-            lose: 0.85,          // Похудение
-            maintain: 1,         // Поддержание веса
-            gain: 1.15           // Набор массы
+            lose: 0.85,
+            maintain: 1,
+            gain: 1.15
         };
 
         const tdee = bmr * activityMultipliers[formData.activityLevel];
@@ -56,68 +53,54 @@ const CalorieCalculator = () => {
 
     if (!user) {
         return (
-            <div className="bg-white rounded-lg shadow p-6">
-                <h2 className="text-2xl font-bold text-gray-800 mb-6">Калькулятор калорий</h2>
-                <p className="text-gray-600">Пожалуйста, войдите в систему, чтобы использовать калькулятор</p>
+            <div className="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-card p-6">
+                <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4 flex items-center gap-2">
+                    <span className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-base">🔥</span>
+                    Калькулятор калорий
+                </h2>
+                <div className="flex flex-col items-center py-10 text-center">
+                    <span className="text-5xl mb-4 empty-state-icon">🔒</span>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xs">
+                        Войдите в систему, чтобы видеть персональный расчёт калорийности
+                    </p>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">Калькулятор калорий</h2>
+        <div className="card-hover bg-white dark:bg-gray-800 rounded-2xl shadow-card p-6">
+            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-5 flex items-center gap-2">
+                <span className="w-8 h-8 rounded-lg bg-orange-100 flex items-center justify-center text-base">🔥</span>
+                Калькулятор калорий
+            </h2>
 
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4">Ваши данные:</h3>
-                <div className="grid grid-cols-2 gap-4">
-                    <div>
-                        <p className="text-gray-600">Пол:</p>
-                        <p className="font-medium">{user.gender === 'male' ? 'Мужской' : 'Женский'}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-600">Возраст:</p>
-                        <p className="font-medium">{user.age} лет</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-600">Вес:</p>
-                        <p className="font-medium">{user.weight} кг</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-600">Рост:</p>
-                        <p className="font-medium">{user.height} см</p>
-                    </div>
-                </div>
+            {/* User data chip */}
+            <div className="mb-4 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl text-xs text-gray-600 dark:text-gray-300 flex flex-wrap gap-3">
+                <span>⚧ {user.gender === 'male' ? 'Мужской' : 'Женский'}</span>
+                <span>🎂 {user.age} лет</span>
+                <span>⚖️ {user.weight} кг</span>
+                <span>📏 {user.height} см</span>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Уровень активности
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">
+                        Активность
                     </label>
-                    <select
-                        name="activityLevel"
-                        value={formData.activityLevel}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
-                    >
+                    <select name="activityLevel" value={formData.activityLevel} onChange={handleChange} className="input-field text-sm">
                         <option value="sedentary">Сидячий образ жизни</option>
-                        <option value="light">Легкая активность (1-3 раза в неделю)</option>
-                        <option value="moderate">Умеренная активность (3-5 раз в неделю)</option>
-                        <option value="active">Высокая активность (6-7 раз в неделю)</option>
-                        <option value="veryActive">Очень высокая активность (2 раза в день)</option>
+                        <option value="light">Лёгкая (1-3 раза/нед.)</option>
+                        <option value="moderate">Умеренная (3-5 раз/нед.)</option>
+                        <option value="active">Высокая (6-7 раз/нед.)</option>
+                        <option value="veryActive">Очень высокая (2 раза/день)</option>
                     </select>
                 </div>
-
                 <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1.5">
                         Цель
                     </label>
-                    <select
-                        name="goal"
-                        value={formData.goal}
-                        onChange={handleChange}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-primary focus:border-primary"
-                    >
+                    <select name="goal" value={formData.goal} onChange={handleChange} className="input-field text-sm">
                         <option value="lose">Похудение</option>
                         <option value="maintain">Поддержание веса</option>
                         <option value="gain">Набор массы</option>
@@ -126,18 +109,21 @@ const CalorieCalculator = () => {
             </div>
 
             {result && (
-                <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <h3 className="text-lg font-semibold text-gray-800 mb-4">Результаты расчета:</h3>
-                    <div className="space-y-2">
-                        <p className="text-gray-700">
-                            <span className="font-medium">Базовый обмен веществ (БОВ):</span> {result.bmr} ккал/день
-                        </p>
-                        <p className="text-gray-700">
-                            <span className="font-medium">Суточная норма калорий (СНК):</span> {result.tdee} ккал/день
-                        </p>
-                        <p className="text-gray-700">
-                            <span className="font-medium">Рекомендуемая норма калорий:</span> {result.targetCalories} ккал/день
-                        </p>
+                <div className="grid grid-cols-3 gap-2 animate-fade-in">
+                    <div className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-center">
+                        <p className="text-xs text-blue-600 dark:text-blue-300 font-semibold uppercase tracking-wide mb-1">БОВ</p>
+                        <p className="text-lg font-bold text-blue-800 dark:text-blue-200">{result.bmr}</p>
+                        <p className="text-xs text-blue-500 dark:text-blue-400">ккал</p>
+                    </div>
+                    <div className="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl text-center">
+                        <p className="text-xs text-purple-600 dark:text-purple-300 font-semibold uppercase tracking-wide mb-1">СНК</p>
+                        <p className="text-lg font-bold text-purple-800 dark:text-purple-200">{result.tdee}</p>
+                        <p className="text-xs text-purple-500 dark:text-purple-400">ккал</p>
+                    </div>
+                    <div className="p-3 bg-green-50 dark:bg-green-900/20 rounded-xl text-center border-2 border-green-200 dark:border-green-700">
+                        <p className="text-xs text-green-600 dark:text-green-300 font-semibold uppercase tracking-wide mb-1">Цель</p>
+                        <p className="text-lg font-bold text-green-800 dark:text-green-200">{result.targetCalories}</p>
+                        <p className="text-xs text-green-500 dark:text-green-400">ккал</p>
                     </div>
                 </div>
             )}
@@ -145,4 +131,4 @@ const CalorieCalculator = () => {
     );
 };
 
-export default CalorieCalculator; 
+export default CalorieCalculator;
