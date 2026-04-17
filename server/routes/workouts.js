@@ -1,8 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
+const rateLimit = require('express-rate-limit');
 const Workout = require('../models/Workout');
 const auth = require('../middleware/auth');
+
+const workoutsLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 120,
+    message: 'Слишком много запросов к тренировкам. Попробуйте позже.',
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+router.use(workoutsLimiter);
 
 // @route   GET api/workouts
 // @desc    Получение всех тренировок пользователя

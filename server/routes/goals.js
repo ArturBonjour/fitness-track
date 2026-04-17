@@ -1,9 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const { check, validationResult } = require('express-validator');
+const rateLimit = require('express-rate-limit');
 const auth = require('../middleware/auth');
 const Goal = require('../models/Goal');
 const User = require('../models/User');
+
+const goalsLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 100,
+    message: 'Слишком много запросов к целям. Попробуйте позже.',
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
+router.use(goalsLimiter);
 
 // @route   GET api/goals
 // @desc    Получение всех целей пользователя

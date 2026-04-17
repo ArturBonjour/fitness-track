@@ -19,6 +19,14 @@ const loginLimiter = rateLimit({
     skipSuccessfulRequests: false
 });
 
+const logoutLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 30,
+    message: 'Слишком много попыток выхода. Попробуйте позже.',
+    standardHeaders: true,
+    legacyHeaders: false
+});
+
 // @route   POST api/auth/register
 // @desc    Регистрация пользователя
 // @access  Public
@@ -179,7 +187,7 @@ router.get('/user', auth, async (req, res) => {
 // @route   POST api/auth/logout
 // @desc    Выход пользователя
 // @access  Private
-router.post('/logout', auth, (req, res) => {
+router.post('/logout', auth, logoutLimiter, (req, res) => {
     res.json({ message: 'Выход выполнен успешно' });
 });
 
