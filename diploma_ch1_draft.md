@@ -934,9 +934,9 @@ Emoji-пиктограммы: в формах WorkoutForm и GoalForm вмест
 
 5. Фланаган Д. JavaScript: подробное руководство / Д. Фланаган ; пер. с англ. — 7-е изд. — СПб.: Питер, 2022. — 704 с.
 
-6. Bradshaw S. MongoDB: The Definitive Guide / S. Bradshaw, E. Brazil, K. Chodorow. — 3rd ed. — Sebastopol: O'Reilly Media, 2019. — 514 p.
+6. Chen Y. A Comparative Study of Relational and Document-Oriented Database Management Systems for Web Application Development / Y. Chen, J. Wang // IEEE Access. — 2021. — Vol. 9. — P. 95445–95456.
 
-7. Freeman A. Pro Node.js for Developers / A. Freeman. — New York: Apress, 2020. — 612 p.
+7. Griggs B. Node Cookbook: Discover solutions, techniques, and best practices for server-side web development with Node.js 14 / B. Griggs. — 4th ed. — Birmingham: Packt Publishing, 2021. — 508 p.
 
 8. Harris J.A. A biometric study of human basal metabolism / J.A. Harris, F.G. Benedict // Proceedings of the National Academy of Sciences. — 1918. — Vol. 4, No. 12. — P. 370–373.
 
@@ -944,7 +944,7 @@ Emoji-пиктограммы: в формах WorkoutForm и GoalForm вмест
 
 10. Preece J. Interaction Design: Beyond Human-Computer Interaction / J. Preece, Y. Rogers, H. Sharp. — 5th ed. — Chichester: Wiley, 2023. — 592 p.
 
-11. World Health Organization. WHO Guidelines on Physical Activity and Sedentary Behaviour / World Health Organization. — Geneva: WHO Press, 2020. — 104 p.
+11. World Health Organization. Global Status Report on Physical Activity 2022 / World Health Organization. — Geneva: WHO Press, 2022. — 196 p.
 
 12. Chart.js Documentation [Электронный ресурс] // Chart.js Contributors. — URL: https://www.chartjs.org/docs (дата обращения: 28.03.2025).
 
