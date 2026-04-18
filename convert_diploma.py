@@ -47,6 +47,10 @@ MARGIN_BOTTOM = Cm(2.0)
 MARGIN_LEFT   = Cm(3.0)
 MARGIN_RIGHT  = Cm(1.5)
 
+# A4 page dimensions (ISO 216): 210 × 297 мм
+PAGE_WIDTH_A4  = Cm(21.0)
+PAGE_HEIGHT_A4 = Cm(29.7)
+
 PARA_INDENT   = Cm(1.25)     # абзацный отступ основного текста
 
 # Главы, которые должны начинаться с новой страницы (уровень 1)
@@ -59,8 +63,16 @@ CHAPTER_NEW_PAGE = True
 # ---------------------------------------------------------------------------
 
 def set_page_margins(doc: Document) -> None:
-    """Задаёт поля страницы согласно методическим указаниям."""
+    """Задаёт формат страницы A4 и поля согласно методическим указаниям.
+
+    Методичка: формат А4 (210 × 297 мм), поля: верхнее и нижнее — 20 мм,
+    левое — 30 мм, правое — 15 мм. python-docx по умолчанию использует формат
+    Letter (8.5 × 11 in); явная установка PAGE_WIDTH_A4 / PAGE_HEIGHT_A4
+    обеспечивает корректный A4.
+    """
     section = doc.sections[0]
+    section.page_width    = PAGE_WIDTH_A4
+    section.page_height   = PAGE_HEIGHT_A4
     section.top_margin    = MARGIN_TOP
     section.bottom_margin = MARGIN_BOTTOM
     section.left_margin   = MARGIN_LEFT
