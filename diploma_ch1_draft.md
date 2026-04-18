@@ -413,7 +413,6 @@
 | PUT | /api/goals/:id | ✓ | Обновить цель |
 | PUT | /api/goals/:id/progress | ✓ | Обновить прогресс цели |
 | DELETE | /api/goals/:id | ✓ | Удалить цель |
-| GET | /api/users/profile | ✓ | Профиль пользователя |
 | PUT | /api/users/profile | ✓ | Обновить профиль |
 | GET | /api/users/weight-history | ✓ | История веса |
 | GET | /api/recommendations | — | Все рекомендации |
