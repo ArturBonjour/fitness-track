@@ -118,13 +118,13 @@ router.put('/:id', auth, async (req, res) => {
         }
 
         // Обновление полей
-        if (title) goal.title = title;
-        if (type) goal.type = type;
-        if (startValue) goal.startValue = startValue;
+        if (title !== undefined) goal.title = title;
+        if (type !== undefined) goal.type = type;
+        if (startValue !== undefined) goal.startValue = startValue;
         if (currentValue !== undefined) goal.currentValue = currentValue;
-        if (targetValue) goal.targetValue = targetValue;
-        if (unit) goal.unit = unit;
-        if (deadline) goal.deadline = deadline;
+        if (targetValue !== undefined) goal.targetValue = targetValue;
+        if (unit !== undefined) goal.unit = unit;
+        if (deadline !== undefined) goal.deadline = deadline;
         if (description !== undefined) goal.description = description;
         if (completed !== undefined) goal.completed = completed;
 
