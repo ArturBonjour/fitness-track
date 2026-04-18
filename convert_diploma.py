@@ -118,12 +118,17 @@ def _set_paragraph_format(
     indent_first: bool = True,
     alignment: WD_ALIGN_PARAGRAPH = WD_ALIGN_PARAGRAPH.JUSTIFY,
 ) -> None:
-    """Применяет единые настройки абзаца для основного текста."""
+    """Применяет единые настройки абзаца для основного текста.
+
+    Включает контроль висячих строк (widowControl) — методичка запрещает
+    менее 5 строк на странице.
+    """
     fmt = para.paragraph_format
     fmt.alignment = alignment
     fmt.space_after = Pt(0)
     _set_line_spacing_15(fmt)
     fmt.first_line_indent = PARA_INDENT if indent_first else Pt(0)
+    _set_widow_orphan_control(para)
 
 
 def _apply_font(run, size: int = FONT_SIZE_MAIN, bold: bool = False, italic: bool = False) -> None:
@@ -138,6 +143,34 @@ def _add_page_break_before(para) -> None:
     pPr = para._p.get_or_add_pPr()
     pb = OxmlElement("w:pageBreakBefore")
     pPr.append(pb)
+
+
+def _set_keep_with_next(para) -> None:
+    """Запрещает отрыв заголовка от следующего абзаца (w:keepNext).
+
+    Методичка: «заголовки на странице не должны отрываться от текста,
+    то есть название не должно быть на одной странице, а текст — на другой.
+    После названия должно быть не менее 3 строк текста».
+    keepNext в сочетании с keepLines обеспечивает это требование.
+    """
+    pPr = para._p.get_or_add_pPr()
+    kn = OxmlElement("w:keepNext")
+    pPr.append(kn)
+    kl = OxmlElement("w:keepLines")
+    pPr.append(kl)
+
+
+def _set_widow_orphan_control(para) -> None:
+    """Включает контроль висячих строк (w:widowControl).
+
+    Методичка: «на странице не допускается менее 5 строк».
+    widowControl предотвращает появление одиночных строк абзаца
+    в начале или конце страницы.
+    """
+    pPr = para._p.get_or_add_pPr()
+    wc = OxmlElement("w:widowControl")
+    wc.set(qn("w:val"), "1")
+    pPr.append(wc)
 
 
 def _set_table_full_width(table) -> None:
@@ -320,6 +353,9 @@ class DiplomaMdParser:
 
         if need_break:
             _add_page_break_before(para)
+
+        # Не допускаем отрыв заголовка от следующего текста (методичка §2.2)
+        _set_keep_with_next(para)
 
         run = para.add_run(text)
         run.font.name = FONT_NAME
