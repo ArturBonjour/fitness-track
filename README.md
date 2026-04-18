@@ -117,27 +117,47 @@
 
 ## Быстрый старт
 
-### Требования
+### Вариант А — Docker (рекомендуется, требует Docker Desktop)
+
+```bash
+git clone https://github.com/ArturBonjour/fitness-track.git
+cd fitness-track
+docker compose up --build
+```
+
+Приложение доступно по адресу: http://localhost:5001
+
+Для инициализации рекомендаций после первого запуска:
+
+```bash
+docker compose exec app node scripts/initRecommendations.js
+```
+
+---
+
+### Вариант Б — локальный запуск
+
+#### Требования
 
 - Node.js >= 18
 - MongoDB (локальный экземпляр или MongoDB Atlas)
 - npm >= 9
 
-### 1. Клонирование
+#### 1. Клонирование
 
 ```bash
 git clone https://github.com/ArturBonjour/fitness-track.git
 cd fitness-track
 ```
 
-### 2. Настройка Backend
+#### 2. Настройка Backend
 
 ```bash
 cd server
 npm install
 ```
 
-Создайте файл `server/.env`:
+Создайте файл `server/.env` (см. `.env.example` в корне):
 
 ```env
 MONGO_URI=mongodb://127.0.0.1:27017/fitness-tracker
@@ -151,14 +171,14 @@ PORT=5001
 npm run init-recommendations
 ```
 
-### 3. Настройка Frontend
+#### 3. Настройка Frontend
 
 ```bash
 cd ../client
 npm install
 ```
 
-### 4. Запуск (режим разработки)
+#### 4. Запуск (режим разработки)
 
 В двух терминалах:
 
@@ -173,7 +193,7 @@ cd client && npm start
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:5001
 
-### 5. Production-сборка
+#### 5. Production-сборка
 
 ```bash
 cd client && npm run build
@@ -221,7 +241,6 @@ cd ../server && npm start
 
 | Метод | Путь | Auth | Описание |
 |---|---|---|---|
-| GET | /api/users/profile | JWT | Профиль пользователя |
 | PUT | /api/users/profile | JWT | Обновить профиль |
 | GET | /api/users/weight-history | JWT | История веса (последние 30 записей) |
 | GET | /api/recommendations | — | Все рекомендации |
@@ -285,8 +304,10 @@ fitness-track/
 │   └── scripts/
 │       └── initRecommendations.js # Начальные данные
 │
-├── diploma_ch1_draft.md           # Дипломная работа (ВКР)
-├── Метод_указ_ВКР_...md           # Методические указания КФУ
+├── Dockerfile                         # Многоэтапная сборка (React → Express)
+├── docker-compose.yml                 # MongoDB + приложение одной командой
+├── .env.example                       # Шаблон переменных окружения
+├── diploma_ch1_draft.md               # Дипломная работа (ВКР)
 └── README.md
 ```
 
