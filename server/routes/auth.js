@@ -63,9 +63,7 @@ router.post(
                 age,
                 weight,
                 height,
-                weightHistory: [{ weight }],
-                goals: [],
-                workouts: []
+                weightHistory: [{ weight }]
             });
 
             const salt = await bcrypt.genSalt(10);

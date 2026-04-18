@@ -397,9 +397,9 @@ class DiplomaMdParser:
 
     def _add_paragraph(self, text: str) -> None:
         """Добавляет параграф основного текста с разбором inline-разметки."""
-        # Подпись к рисунку: "Рисунок X.Y — ..."
+        # Подпись к рисунку: "Рисунок X.Y. Название" (методичка прил. 4: точка после номера)
         is_fig_caption = bool(self.FIGURE_CAP_RE.match(text))
-        # Подпись к таблице: "Таблица X.X — ..."
+        # Подпись к таблице: "Таблица X.X. Название" (методичка прил. 5: точка после номера)
         is_tbl_caption = bool(self.TABLE_CAP_RE.match(text))
 
         if is_tbl_caption:
