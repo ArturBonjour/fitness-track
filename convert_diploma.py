@@ -16,7 +16,7 @@ convert_diploma.py — конвертация дипломной работы и
   - Заголовки по центру, без жирного, без курсива, без точки в конце
   - Каждая глава начинается с новой страницы
   - Нумерация страниц снизу по центру, Times New Roman 12 пт
-  - Блоки кода — Courier New 12 пт, рамка 0.25 пт, белый фон
+  - Блоки кода — Courier New 12 пт, рамка 0.25 пт (2/8 pt), белый фон
   - Подписи к таблицам выровнены по правому краю
   - Таблицы растянуты на всю ширину текстового поля
 """
@@ -71,9 +71,14 @@ def add_page_numbers(doc: Document) -> None:
     """Добавляет сквозную нумерацию страниц снизу по центру (12 пт, TNR).
 
     Нумерация начинается с титульного листа, но номер на нём не отображается;
-    первый видимый номер — на странице «Содержание».
+    первый видимый номер — на странице «Содержание». Реализуется через
+    «different first page footer»: первая страница имеет пустой колонтитул,
+    все остальные — с полем PAGE.
     """
     section = doc.sections[0]
+    # Титульный лист: отдельный (пустой) колонтитул первой страницы
+    section.different_first_page_header_footer = True
+    # Обычный колонтитул (со 2-й страницы и далее)
     footer = section.footer
     para = footer.paragraphs[0]
     para.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -94,6 +99,9 @@ def add_page_numbers(doc: Document) -> None:
     fld_end = OxmlElement("w:fldChar")
     fld_end.set(qn("w:fldCharType"), "end")
     run._r.append(fld_end)
+
+    # Первая страница: явно оставляем пустой колонтитул (nothing to add)
+    _ = section.first_page_footer
 
 
 def _set_line_spacing_15(fmt) -> None:
@@ -152,7 +160,7 @@ def _add_code_border(para) -> None:
     for side in ("top", "left", "bottom", "right"):
         bdr = OxmlElement(f"w:{side}")
         bdr.set(qn("w:val"), "single")
-        bdr.set(qn("w:sz"), "4")      # 4 восьмых пункта = 0.5 пт (ближайшее к 0.25)
+        bdr.set(qn("w:sz"), "2")      # 2 восьмых пункта = 0.25 пт (по методичке)
         bdr.set(qn("w:space"), "4")
         bdr.set(qn("w:color"), "000000")
         pBdr.append(bdr)
