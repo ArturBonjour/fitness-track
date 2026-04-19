@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   mongo:
     image: mongo:6
@@ -8,6 +6,8 @@ services:
       - mongodata:/data/db
     ports:
       - "27017:27017"
+    networks:
+      - app-net
     healthcheck:
       test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
       interval: 10s
@@ -20,6 +20,8 @@ services:
     restart: unless-stopped
     ports:
       - "5001:5001"
+    networks:
+      - app-net
     environment:
       MONGO_URI: mongodb://mongo:27017/fitness-tracker
       JWT_SECRET: ${JWT_SECRET:-change_me_in_production}
@@ -31,3 +33,7 @@ services:
 
 volumes:
   mongodata:
+
+networks:
+  app-net:
+    driver: bridge

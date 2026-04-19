@@ -17,14 +17,6 @@ app.set('trust proxy', 1);
 app.use(express.json());
 app.use(cors());
 
-// Подключение к базе данных
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fitness-tracker')
-    .then(() => console.log('MongoDB подключена'))
-    .catch(err => {
-        console.error('Ошибка подключения к MongoDB:', err.message);
-        process.exit(1);
-    });
-
 // Маршруты API
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
@@ -44,6 +36,17 @@ if (process.env.NODE_ENV === 'production') {
     });
 }
 
-// Запуск сервера
-const PORT = process.env.PORT || 5001;
-app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`)); 
+// Подключение к БД с повторными попытками, затем запуск сервера
+async function startServer() {
+    try {
+        await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fitness-tracker');
+        console.log('MongoDB подключена');
+        const PORT = process.env.PORT || 5001;
+        app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));
+    } catch (err) {
+        console.error('Ошибка подключения к MongoDB:', err.message, '— повтор через 5 с');
+        setTimeout(startServer, 5000);
+    }
+}
+
+startServer(); 
