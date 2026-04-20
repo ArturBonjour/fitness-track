@@ -37,6 +37,9 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 // Подключение к БД с повторными попытками, затем запуск сервера
+const MAX_RETRIES = 10;
+let retryCount = 0;
+
 async function startServer() {
     try {
         await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fitness-tracker', {
@@ -47,7 +50,12 @@ async function startServer() {
         const PORT = process.env.PORT || 5001;
         app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));
     } catch (err) {
-        console.error('Ошибка подключения к MongoDB:', err.message, '— повтор через 5 с');
+        retryCount += 1;
+        if (retryCount >= MAX_RETRIES) {
+            console.error(`Не удалось подключиться к MongoDB после ${MAX_RETRIES} попыток. Завершение процесса.`);
+            process.exit(1);
+        }
+        console.error(`Ошибка подключения к MongoDB (попытка ${retryCount}/${MAX_RETRIES}): ${err.message} — повтор через 5 с`);
         setTimeout(startServer, 5000);
     }
 }

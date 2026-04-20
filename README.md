@@ -76,7 +76,7 @@
 | Frontend | Chart.js + react-chartjs-2 | 4 |
 | Frontend | Axios | 1 |
 | Frontend | Day.js | 1 |
-| Backend | Node.js | 18+ |
+| Backend | Node.js | 20+ |
 | Backend | Express | 4 |
 | Backend | jsonwebtoken | 9 |
 | Backend | bcryptjs | 2 |
@@ -119,6 +119,8 @@
 
 ### Вариант А — Docker (рекомендуется, требует Docker Desktop)
 
+> **Важно:** перед запуском отключите VPN. Docker использует внутреннюю DNS-сеть bridge (`127.0.0.11`) для разрешения имён контейнеров (`mongo`). Большинство VPN-клиентов перехватывают DNS-трафик и нарушают эту маршрутизацию, из-за чего контейнер приложения не может найти MongoDB.
+
 ```bash
 git clone https://github.com/ArturBonjour/fitness-track.git
 cd fitness-track
@@ -126,6 +128,8 @@ docker compose up --build
 ```
 
 Приложение доступно по адресу: http://localhost:5001
+
+> **Подсказка:** Docker Compose v2 в интерактивном режиме перехватывает нажатия клавиш. Нажатие `d` **отсоединяет** (detach) терминал от потока логов, не останавливая контейнеры — это нормальное поведение. Для полной остановки используйте `Ctrl+C` или `docker compose down`.
 
 Для инициализации рекомендаций после первого запуска:
 
@@ -139,7 +143,7 @@ docker compose exec app node scripts/initRecommendations.js
 
 #### Требования
 
-- Node.js >= 18
+- Node.js >= 20
 - MongoDB (локальный экземпляр или MongoDB Atlas)
 - npm >= 9
 
