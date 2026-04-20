@@ -39,7 +39,10 @@ if (process.env.NODE_ENV === 'production') {
 // Подключение к БД с повторными попытками, затем запуск сервера
 async function startServer() {
     try {
-        await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fitness-tracker');
+        await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/fitness-tracker', {
+            serverSelectionTimeoutMS: 5000,
+            connectTimeoutMS: 5000,
+        });
         console.log('MongoDB подключена');
         const PORT = process.env.PORT || 5001;
         app.listen(PORT, () => console.log(`Сервер запущен на порту ${PORT}`));
