@@ -4,8 +4,6 @@ services:
     restart: unless-stopped
     volumes:
       - mongodata:/data/db
-    ports:
-      - "27017:27017"
     networks:
       - app-net
     healthcheck:
