@@ -7,6 +7,11 @@ import { NotificationContext } from '../context/NotificationContext';
 import axios from 'axios';
 import useAuth from '../hooks/useAuth';
 
+const WORKOUT_EMOJIS = {
+    'силовая': '💪', 'кардио': '🏃', 'растяжка': '🧘',
+    'йога': '🌿', 'плавание': '🏊', 'другое': '🏋️',
+};
+
 const Calendar = () => {
     const { showNotification } = useContext(NotificationContext);
     const { isAuthenticated } = useAuth();
@@ -14,6 +19,7 @@ const Calendar = () => {
     const [calendarDays, setCalendarDays] = useState([]);
     const [workouts, setWorkouts] = useState([]);
     const [goals, setGoals] = useState([]);
+    const [loadingData, setLoadingData] = useState(false);
     const [isWorkoutModalOpen, setIsWorkoutModalOpen] = useState(false);
     const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
@@ -21,36 +27,35 @@ const Calendar = () => {
     const [selectedGoal, setSelectedGoal] = useState(null);
     const [isViewWorkoutModalOpen, setIsViewWorkoutModalOpen] = useState(false);
     const [isViewGoalModalOpen, setIsViewGoalModalOpen] = useState(false);
+    const [deletingWorkout, setDeletingWorkout] = useState(false);
+    const [deletingGoal, setDeletingGoal] = useState(false);
 
     // Получение данных о тренировках и целях
     useEffect(() => {
         const fetchData = async () => {
+            if (!isAuthenticated) return;
             try {
-                if (!isAuthenticated) return;
-
+                setLoadingData(true);
                 const startOfMonth = currentDate.startOf('month').format('YYYY-MM-DD');
                 const endOfMonth = currentDate.endOf('month').format('YYYY-MM-DD');
 
-                // Получаем тренировки из API
-                const workoutsRes = await axios.get('/api/workouts');
-                const allWorkouts = workoutsRes.data;
+                const [workoutsRes, goalsRes] = await Promise.all([
+                    axios.get('/api/workouts'),
+                    axios.get('/api/goals'),
+                ]);
 
-                // Фильтруем тренировки для текущего месяца
-                const filteredWorkouts = allWorkouts.filter(workout => {
+                const filteredWorkouts = workoutsRes.data.filter(workout => {
                     const workoutDate = dayjs(workout.date);
                     return workoutDate.isAfter(dayjs(startOfMonth).subtract(1, 'day')) &&
                         workoutDate.isBefore(dayjs(endOfMonth).add(1, 'day'));
                 });
 
-                // Получаем цели из API
-                const goalsRes = await axios.get('/api/goals');
-                const allGoals = goalsRes.data;
-
                 setWorkouts(filteredWorkouts);
-                setGoals(allGoals);
+                setGoals(goalsRes.data);
             } catch (err) {
-                console.error('Ошибка при загрузке данных:', err);
                 showNotification(`Ошибка при загрузке данных: ${err.response?.data?.message || err.message}`, 'error');
+            } finally {
+                setLoadingData(false);
             }
         };
 
