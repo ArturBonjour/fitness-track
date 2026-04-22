@@ -221,31 +221,63 @@ const Calendar = () => {
         );
     };
 
+    // Удаление тренировки
+    const handleDeleteWorkout = async (workoutId) => {
+        try {
+            setDeletingWorkout(true);
+            await axios.delete(`/api/workouts/${workoutId}`);
+            setWorkouts(prev => prev.filter(w => w._id !== workoutId));
+            setIsViewWorkoutModalOpen(false);
+            showNotification('Тренировка удалена', 'success');
+        } catch (err) {
+            showNotification(err.response?.data?.message || 'Ошибка при удалении тренировки', 'error');
+        } finally {
+            setDeletingWorkout(false);
+        }
+    };
+
+    // Удаление цели
+    const handleDeleteGoal = async (goalId) => {
+        try {
+            setDeletingGoal(true);
+            await axios.delete(`/api/goals/${goalId}`);
+            setGoals(prev => prev.filter(g => g._id !== goalId));
+            setIsViewGoalModalOpen(false);
+            showNotification('Цель удалена', 'success');
+        } catch (err) {
+            showNotification(err.response?.data?.message || 'Ошибка при удалении цели', 'error');
+        } finally {
+            setDeletingGoal(false);
+        }
+    };
+
     // Дни недели
     const weekDays = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
     return (
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-card p-4">
             <div className="flex justify-between items-center mb-4">
                 <div>
-                    <h2 className="text-xl font-bold text-gray-800">
+                    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
                         {currentDate.format('MMMM YYYY')}
                     </h2>
                 </div>
                 <div className="flex space-x-2">
                     <button
                         onClick={goToPreviousMonth}
-                        className="p-2 rounded-md hover:bg-gray-100"
+                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        aria-label="Предыдущий месяц"
                     >
-                        <svg className="h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-5 w-5 text-gray-600 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                         </svg>
                     </button>
                     <button
                         onClick={goToNextMonth}
-                        className="p-2 rounded-md hover:bg-gray-100"
+                        className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                        aria-label="Следующий месяц"
                     >
-                        <svg className="h-5 w-5 text-gray-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="h-5 w-5 text-gray-600 dark:text-gray-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                         </svg>
                     </button>
@@ -254,7 +286,7 @@ const Calendar = () => {
 
             <div className="grid grid-cols-7 gap-1">
                 {weekDays.map(day => (
-                    <div key={day} className="text-center py-2 font-semibold text-sm text-gray-600">
+                    <div key={day} className="text-center py-2 font-semibold text-sm text-gray-600 dark:text-gray-400">
                         {day}
                     </div>
                 ))}
@@ -267,24 +299,24 @@ const Calendar = () => {
                     return (
                         <div
                             key={index}
-                            onClick={() => openWorkoutModal(day.date)}
-                            className={`
-                                min-h-[100px] p-1 border border-gray-200 cursor-pointer
-                                ${!day.isCurrentMonth ? 'bg-gray-50' : ''}
-                                ${isToday ? 'bg-purple-50 border-purple-200' : ''}
+                            onClick={() => isAuthenticated && openWorkoutModal(day.date)}
+                            className={`calendar-day min-h-[100px] p-1 border rounded-lg transition-colors
+                                ${isAuthenticated ? 'cursor-pointer' : 'cursor-default'}
+                                ${!day.isCurrentMonth ? 'bg-gray-50 dark:bg-gray-700/30 border-gray-100 dark:border-gray-700' : 'border-gray-200 dark:border-gray-600'}
+                                ${isToday ? 'bg-purple-50 dark:bg-purple-900/20 border-purple-300 dark:border-purple-600' : ''}
                             `}
                         >
                             <div className="flex justify-between items-center mb-1">
                                 <span
                                     className={`text-sm font-medium rounded-full w-6 h-6 flex items-center justify-center
-                                        ${isToday ? 'bg-primary text-white' : ''}
-                                        ${!day.isCurrentMonth ? 'text-gray-400' : ''}
+                                        ${isToday ? 'bg-primary text-white' : 'text-gray-700 dark:text-gray-300'}
+                                        ${!day.isCurrentMonth ? 'text-gray-400 dark:text-gray-600' : ''}
                                     `}
                                 >
                                     {day.date.date()}
                                 </span>
                                 {dayWorkouts.length > 0 && (
-                                    <span className="bg-primary text-xs text-white px-1.5 py-0.5 rounded">
+                                    <span className="bg-primary text-xs text-white px-1.5 py-0.5 rounded-full">
                                         {dayWorkouts.length}
                                     </span>
                                 )}
@@ -295,7 +327,7 @@ const Calendar = () => {
                                     <div
                                         key={workout._id}
                                         onClick={(e) => openViewWorkoutModal(workout, e)}
-                                        className="text-xs p-1 rounded bg-purple-100 text-purple-800 truncate"
+                                        className="text-xs p-1 rounded bg-purple-100 dark:bg-purple-900/40 text-purple-800 dark:text-purple-300 truncate"
                                     >
                                         {workout.time} - {workout.type}
                                     </div>
@@ -310,7 +342,7 @@ const Calendar = () => {
                                     <div
                                         key={goal._id}
                                         onClick={(e) => openViewGoalModal(goal, e)}
-                                        className="text-xs p-1 rounded bg-green-100 text-green-800 truncate"
+                                        className="text-xs p-1 rounded bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-300 truncate"
                                     >
                                         {goal.title}
                                     </div>
@@ -324,15 +356,17 @@ const Calendar = () => {
             <div className="flex justify-between items-center mt-4">
                 <button
                     onClick={openGoalModal}
-                    className="bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md"
+                    disabled={!isAuthenticated}
+                    className="btn-press bg-gradient-to-r from-green-600 to-green-500 hover:from-green-700 hover:to-green-600 text-white py-2 px-4 rounded-xl text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Добавить цель
+                    + Добавить цель
                 </button>
                 <button
                     onClick={() => openWorkoutModal()}
-                    className="bg-primary hover:bg-purple-800 text-white py-2 px-4 rounded-md"
+                    disabled={!isAuthenticated}
+                    className="btn-press bg-gradient-to-r from-primary to-primary-light hover:from-primary-dark hover:to-primary text-white py-2 px-4 rounded-xl text-sm font-medium shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    Добавить тренировку
+                    + Добавить тренировку
                 </button>
             </div>
 
@@ -366,30 +400,51 @@ const Calendar = () => {
                 {selectedWorkout && (
                     <div className="space-y-4">
                         <div>
-                            <h3 className="text-lg font-medium text-gray-900">
-                                {selectedWorkout.type}
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                                <span>{WORKOUT_EMOJIS[selectedWorkout.type] || '🏋️'}</span>
+                                <span className="capitalize">{selectedWorkout.type}</span>
                             </h3>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 {dayjs(selectedWorkout.date).format('DD.MM.YYYY')} в {selectedWorkout.time}
                             </p>
                         </div>
 
-                        <div>
-                            <p className="text-sm text-gray-500">Продолжительность</p>
-                            <p className="font-medium">{selectedWorkout.duration} минут</p>
+                        <div className="flex gap-3">
+                            <div className="flex-1 bg-gray-50 dark:bg-gray-700/40 rounded-xl px-3 py-2">
+                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-0.5">Длительность</p>
+                                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{selectedWorkout.duration} мин</p>
+                            </div>
+                            <div className="flex-1 bg-gray-50 dark:bg-gray-700/40 rounded-xl px-3 py-2">
+                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-0.5">Дата</p>
+                                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{dayjs(selectedWorkout.date).format('DD.MM.YYYY')}</p>
+                            </div>
                         </div>
 
                         {selectedWorkout.comment && (
-                            <div>
-                                <p className="text-sm text-gray-500">Комментарий</p>
-                                <p className="font-medium">{selectedWorkout.comment}</p>
+                            <div className="bg-gray-50 dark:bg-gray-700/40 rounded-xl px-3 py-2">
+                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-0.5">Комментарий</p>
+                                <p className="text-sm text-gray-700 dark:text-gray-300">{selectedWorkout.comment}</p>
                             </div>
                         )}
 
-                        <div className="flex justify-end">
+                        <div className="flex justify-between items-center pt-1">
+                            <button
+                                onClick={() => handleDeleteWorkout(selectedWorkout._id)}
+                                disabled={deletingWorkout}
+                                className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                            >
+                                {deletingWorkout ? (
+                                    <span className="h-4 w-4 rounded-full border-2 border-red-400 border-t-transparent animate-spin" />
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                )}
+                                Удалить
+                            </button>
                             <button
                                 onClick={() => setIsViewWorkoutModalOpen(false)}
-                                className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md"
+                                className="px-4 py-2 rounded-xl text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                             >
                                 Закрыть
                             </button>
@@ -407,42 +462,56 @@ const Calendar = () => {
                 {selectedGoal && (
                     <div className="space-y-4">
                         <div>
-                            <h3 className="text-lg font-medium text-gray-900">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                                 {selectedGoal.title}
                             </h3>
-                            <p className="text-sm text-gray-500">
+                            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                                 Дедлайн: {dayjs(selectedGoal.deadline).format('DD.MM.YYYY')}
                             </p>
                         </div>
 
                         <div>
-                            <p className="text-sm text-gray-500">Прогресс</p>
-                            <div className="w-full bg-gray-200 rounded-full h-2.5 mt-1">
+                            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-2">Прогресс</p>
+                            <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-2.5">
                                 <div
-                                    className="bg-primary h-2.5 rounded-full"
+                                    className="bg-primary h-2.5 rounded-full transition-all"
                                     style={{
                                         width: `${Math.min(100, Math.max(0, ((selectedGoal.currentValue - selectedGoal.startValue) / (selectedGoal.targetValue - selectedGoal.startValue)) * 100))}%`
                                     }}
-                                ></div>
+                                />
                             </div>
-                            <div className="flex justify-between text-xs text-gray-500 mt-1">
-                                <span>{selectedGoal.startValue}</span>
-                                <span>{selectedGoal.currentValue}</span>
-                                <span>{selectedGoal.targetValue}</span>
+                            <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                <span>{selectedGoal.startValue} {selectedGoal.unit}</span>
+                                <span className="font-semibold text-primary dark:text-purple-400">{selectedGoal.currentValue} {selectedGoal.unit}</span>
+                                <span>{selectedGoal.targetValue} {selectedGoal.unit}</span>
                             </div>
                         </div>
 
                         {selectedGoal.description && (
-                            <div>
-                                <p className="text-sm text-gray-500">Описание</p>
-                                <p className="font-medium">{selectedGoal.description}</p>
+                            <div className="bg-gray-50 dark:bg-gray-700/40 rounded-xl px-3 py-2">
+                                <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-0.5">Описание</p>
+                                <p className="text-sm text-gray-700 dark:text-gray-300">{selectedGoal.description}</p>
                             </div>
                         )}
 
-                        <div className="flex justify-end">
+                        <div className="flex justify-between items-center pt-1">
+                            <button
+                                onClick={() => handleDeleteGoal(selectedGoal._id)}
+                                disabled={deletingGoal}
+                                className="btn-press flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-medium bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+                            >
+                                {deletingGoal ? (
+                                    <span className="h-4 w-4 rounded-full border-2 border-red-400 border-t-transparent animate-spin" />
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                    </svg>
+                                )}
+                                Удалить
+                            </button>
                             <button
                                 onClick={() => setIsViewGoalModalOpen(false)}
-                                className="bg-gray-200 hover:bg-gray-300 text-gray-800 py-2 px-4 rounded-md"
+                                className="px-4 py-2 rounded-xl text-sm font-medium bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
                             >
                                 Закрыть
                             </button>

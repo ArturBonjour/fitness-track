@@ -41,6 +41,8 @@ const Profile = () => {
     const [weightHistory, setWeightHistory] = useState([]);
     const [editMode, setEditMode] = useState(false);
     const [saving, setSaving] = useState(false);
+    const [deletingWorkoutId, setDeletingWorkoutId] = useState(null);
+    const [deletingGoalId, setDeletingGoalId] = useState(null);
     const [formData, setFormData] = useState({
         name: '', gender: '', age: '', weight: '', height: '',
     });
@@ -109,6 +111,34 @@ const Profile = () => {
     const handleFilterChange = (e) => {
         const { name, value } = e.target;
         setFilter(prev => ({ ...prev, [name]: value }));
+    };
+
+    // Удаление тренировки
+    const handleDeleteWorkout = async (workoutId) => {
+        try {
+            setDeletingWorkoutId(workoutId);
+            await axios.delete(`/api/workouts/${workoutId}`);
+            setWorkouts(prev => prev.filter(w => w._id !== workoutId));
+            showNotification('Тренировка удалена', 'success');
+        } catch (err) {
+            showNotification(err.response?.data?.message || 'Ошибка при удалении тренировки', 'error');
+        } finally {
+            setDeletingWorkoutId(null);
+        }
+    };
+
+    // Удаление цели
+    const handleDeleteGoal = async (goalId) => {
+        try {
+            setDeletingGoalId(goalId);
+            await axios.delete(`/api/goals/${goalId}`);
+            setGoals(prev => prev.filter(g => g._id !== goalId));
+            showNotification('Цель удалена', 'success');
+        } catch (err) {
+            showNotification(err.response?.data?.message || 'Ошибка при удалении цели', 'error');
+        } finally {
+            setDeletingGoalId(null);
+        }
     };
 
     // Фильтрация тренировок
@@ -348,6 +378,7 @@ const Profile = () => {
                                         <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Тип</th>
                                         <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Время</th>
                                         <th className="px-4 py-2.5 text-left text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Длительность</th>
+                                        <th className="px-4 py-2.5 text-right text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide">Действия</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-gray-700">
@@ -361,10 +392,27 @@ const Profile = () => {
                                             </td>
                                             <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{workout.time}</td>
                                             <td className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 whitespace-nowrap">{workout.duration} мин</td>
+                                            <td className="px-4 py-3 text-right">
+                                                <button
+                                                    onClick={() => handleDeleteWorkout(workout._id)}
+                                                    disabled={deletingWorkoutId === workout._id}
+                                                    className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                    title="Удалить тренировку"
+                                                >
+                                                    {deletingWorkoutId === workout._id ? (
+                                                        <span className="h-3.5 w-3.5 rounded-full border-2 border-red-400 border-t-transparent animate-spin" />
+                                                    ) : (
+                                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                            <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                        </svg>
+                                                    )}
+                                                    Удалить
+                                                </button>
+                                            </td>
                                         </tr>
                                     )) : (
                                         <tr>
-                                            <td colSpan={4} className="text-center py-6 text-sm text-gray-400 dark:text-gray-500">
+                                            <td colSpan={5} className="text-center py-6 text-sm text-gray-400 dark:text-gray-500">
                                                 Нет тренировок по выбранным фильтрам
                                             </td>
                                         </tr>
@@ -398,6 +446,51 @@ const Profile = () => {
                                     className="rounded-xl border border-gray-100 dark:border-gray-700 p-4 hover:border-primary/30 dark:hover:border-purple-500/30 transition-colors">
                                     <div className="flex items-start justify-between gap-2 mb-2">
                                         <div>
+                                            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">{goal.title}</h3>
+                                            {goal.description && (
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{goal.description}</p>
+                                            )}
+                                        </div>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            <span className={`px-2 py-0.5 text-xs font-semibold rounded-lg ${
+                                                goal.completed
+                                                    ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400'
+                                                    : dayjs(goal.deadline).isBefore(dayjs())
+                                                        ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400'
+                                                        : 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400'
+                                            }`}>
+                                                {goal.completed ? '✓ Выполнено' : `До ${dayjs(goal.deadline).format('DD.MM.YY')}`}
+                                            </span>
+                                            <button
+                                                onClick={() => handleDeleteGoal(goal._id)}
+                                                disabled={deletingGoalId === goal._id}
+                                                className="flex items-center justify-center w-7 h-7 rounded-lg text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                title="Удалить цель"
+                                            >
+                                                {deletingGoalId === goal._id ? (
+                                                    <span className="h-3.5 w-3.5 rounded-full border-2 border-red-400 border-t-transparent animate-spin" />
+                                                ) : (
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden mb-1">
+                                        <div
+                                            className={`h-full rounded-full transition-all ${goal.completed ? 'bg-green-500' : 'bg-primary'}`}
+                                            style={{ width: `${pct}%` }}
+                                        />
+                                    </div>
+                                    <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500">
+                                        <span>{goal.startValue} {goal.unit}</span>
+                                        <span className="font-semibold text-primary dark:text-purple-400">{pct}%</span>
+                                        <span>{goal.targetValue} {goal.unit}</span>
+                                    </div>
+                                </div>
+                            );
+                        })}
                                             <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">{goal.title}</h3>
                                             {goal.description && (
                                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{goal.description}</p>
