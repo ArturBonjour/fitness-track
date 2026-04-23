@@ -491,35 +491,6 @@ const Profile = () => {
                                 </div>
                             );
                         })}
-                                            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100">{goal.title}</h3>
-                                            {goal.description && (
-                                                <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">{goal.description}</p>
-                                            )}
-                                        </div>
-                                        <span className={`shrink-0 px-2 py-0.5 text-xs font-semibold rounded-lg ${
-                                            goal.completed
-                                                ? 'bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400'
-                                                : dayjs(goal.deadline).isBefore(dayjs())
-                                                    ? 'bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-400'
-                                                    : 'bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-400'
-                                        }`}>
-                                            {goal.completed ? '✓ Выполнено' : `До ${dayjs(goal.deadline).format('DD.MM.YY')}`}
-                                        </span>
-                                    </div>
-                                    <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden mb-1">
-                                        <div
-                                            className={`h-full rounded-full transition-all ${goal.completed ? 'bg-green-500' : 'bg-primary'}`}
-                                            style={{ width: `${pct}%` }}
-                                        />
-                                    </div>
-                                    <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500">
-                                        <span>{goal.startValue} {goal.unit}</span>
-                                        <span className="font-semibold text-primary dark:text-purple-400">{pct}%</span>
-                                        <span>{goal.targetValue} {goal.unit}</span>
-                                    </div>
-                                </div>
-                            );
-                        })}
                     </div>
                 ) : (
                     <div className="flex flex-col items-center justify-center py-10 text-gray-400 dark:text-gray-500">

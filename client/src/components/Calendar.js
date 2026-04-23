@@ -19,7 +19,7 @@ const Calendar = () => {
     const [calendarDays, setCalendarDays] = useState([]);
     const [workouts, setWorkouts] = useState([]);
     const [goals, setGoals] = useState([]);
-    const [loadingData, setLoadingData] = useState(false);
+    const [, setLoadingData] = useState(false);
     const [isWorkoutModalOpen, setIsWorkoutModalOpen] = useState(false);
     const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
